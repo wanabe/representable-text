@@ -9,3 +9,6 @@
 
 # rspec failure tracking
 .rspec_status
+
+# gemfile versions should not be locked because this is a library
+Gemfile.lock
