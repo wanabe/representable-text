@@ -38,12 +38,12 @@ module Representable
         @pattern << pattern
       end
 
-      def left(size)
+      def left(length)
         yield
         pattern " *", escape: false
       end
 
-      def right(size)
+      def right(length)
         pattern " *", escape: false
         yield
       end
@@ -59,8 +59,8 @@ module Representable
     end
 
     def from_text(text, options={})
-      capture_hash = regexp.match(text)&.named_captures || {}
-      update_properties_from(capture_hash, options, Binding)
+      hash = regexp.match(text)&.named_captures || {}
+      update_properties_from(hash, options, Binding)
     end
 
   private

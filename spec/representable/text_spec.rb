@@ -33,6 +33,24 @@ RSpec.describe Representable::Text do
     end
 
     let(:perf_line_text) { "     0.32%  somecommand  [unknown]         [k] 0xffffffff814c4440" }
+    let(:perf_line_property_names) {
+      %i[
+        percentage
+        command
+        shared_object
+        symbol_type
+        symbol
+      ]
+    }
+    let(:perf_line_hash) {
+      {
+        percentage:    "0.32",
+        command:       "somecommand",
+        shared_object: "[unknown]",
+        symbol_type:   "k",
+        symbol:        "0xffffffff814c4440",
+      }
+    }
   end
 
   describe "#from_text" do
@@ -42,15 +60,7 @@ RSpec.describe Representable::Text do
       it "gets properties" do
         perf_line = OpenStruct.new
         representer.new(perf_line).from_text(perf_line_text)
-        expect(perf_line.to_h.slice(*%i[percentage command shared_object symbol_type symbol])).to eq(
-          {
-            percentage:    "0.32",
-            command:       "somecommand",
-            shared_object: "[unknown]",
-            symbol_type:   "k",
-            symbol:        "0xffffffff814c4440",
-          }
-        )
+        expect(perf_line.to_h.slice(*perf_line_property_names)).to eq(perf_line_hash.slice(*perf_line_property_names))
       end
     end
   end
