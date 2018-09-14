@@ -9,8 +9,21 @@ module Representable
         end
       end
 
+      def initialize(definition)
+        super
+        @length_capture = definition[:length_capture]
+      end
+
       def read(capture_hash, as)
-        capture_hash.has_key?(as) ? capture_hash[as] : FragmentNotFound
+        length_capture_text = capture_hash[@length_capture]
+        if length_capture_text
+          return length_capture_text.length
+        end
+
+        if capture_hash.has_key?(as)
+          return capture_hash[as]
+        end
+        FragmentNotFound
       end
     end
   end

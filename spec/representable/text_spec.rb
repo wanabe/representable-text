@@ -42,6 +42,12 @@ RSpec.describe Representable::Text do
         symbol
       ]
     }
+    let(:perf_line_length_names) {
+      %i[
+        command_length
+        shared_object_length
+      ]
+    }
     let(:perf_line_hash) {
       {
         percentage:    "0.32",
@@ -49,6 +55,8 @@ RSpec.describe Representable::Text do
         shared_object: "[unknown]",
         symbol_type:   "k",
         symbol:        "0xffffffff814c4440",
+        command_length:       11,
+        shared_object_length: 16,
       }
     }
   end
@@ -61,6 +69,12 @@ RSpec.describe Representable::Text do
         perf_line = OpenStruct.new
         representer.new(perf_line).from_text(perf_line_text)
         expect(perf_line.to_h.slice(*perf_line_property_names)).to eq(perf_line_hash.slice(*perf_line_property_names))
+      end
+
+      it "gets length properties" do
+        perf_line = OpenStruct.new
+        representer.new(perf_line).from_text(perf_line_text)
+        expect(perf_line.to_h.slice(*perf_line_length_names)).to eq(perf_line_hash.slice(*perf_line_length_names))
       end
     end
   end

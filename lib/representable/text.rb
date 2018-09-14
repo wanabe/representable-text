@@ -38,14 +38,30 @@ module Representable
         @pattern << pattern
       end
 
+      def length_property(length)
+        if length.is_a? Symbol
+          name = "__#{length}_text__"
+          property length, nil, length_capture: name
+          @pattern << "(?<#{name}>"
+          yield
+          @pattern << ")"
+        else
+          yield
+        end
+      end
+
       def left(length)
-        yield
-        pattern " *", escape: false
+        length_property(length) do
+          yield
+          pattern " *", escape: false
+        end
       end
 
       def right(length)
-        pattern " *", escape: false
-        yield
+        length_property(length) do
+          pattern " *", escape: false
+          yield
+        end
       end
 
       def property(name, pattern = nil, **opt)
