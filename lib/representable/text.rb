@@ -12,6 +12,7 @@ module Representable
         extend ClassMethods
         register_feature Representable::Text
         @pattern = ""
+        @collection_pattern = ""
       end
     end
 
@@ -32,6 +33,7 @@ module Representable
           pattern = pattern.source
         end
 
+        @collection_pattern << pattern
         if name
           pattern = "(?<#{name}>#{pattern})"
         end
@@ -69,8 +71,20 @@ module Representable
         super name, **opt
       end
 
+      def collection(name, delim_pattern = nil, **opt)
+        if delim_pattern
+          decorator_pattern = opt[:decorator].to_collection_regexp
+          pattern /#{decorator_pattern}(?:#{delim_pattern.source}#{decorator_pattern})*/, name: name
+        end
+        super name, **opt
+      end
+
       def to_regexp
         Regexp.new(@pattern)
+      end
+
+      def to_collection_regexp
+        Regexp.new(@collection_pattern)
       end
     end
 
@@ -82,6 +96,10 @@ module Representable
   private
     def regexp
       self.class.to_regexp
+    end
+
+    def collection_regexp
+      self.class.to_collection_regexp
     end
   end
 end

@@ -5,6 +5,7 @@ module Representable
     class Binding < Representable::Binding
       class << self
         def build_for(definition)
+          return Collection.new(definition) if definition.array?
           new(definition)
         end
       end
@@ -24,6 +25,29 @@ module Representable
           return capture_hash[as]
         end
         FragmentNotFound
+      end
+
+      def deserialize_method
+        :from_text
+      end
+
+      class Collection < self
+        include Representable::Binding::Collection
+
+        def initialize(definition)
+          super
+          @regexp = definition[:decorator].to_collection_regexp if definition[:decorator]
+        end
+
+        def read(capture_hash, as)
+          result = super
+
+          if @regexp && result.respond_to?(:scan)
+            return result.scan(@regexp)
+          end
+
+          result
+        end
       end
     end
   end
